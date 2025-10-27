@@ -1,1 +1,27 @@
-hello
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vulnerable Page</title>
+</head>
+<body>
+    <h1>Vulnerable Page</h1>
+    <p><a href="/">Back to Home</a></p>
+
+    <hr>
+    <h3>
+        Welcome, {{ name|safe }}!
+    </h3>
+    <hr>
+
+    <h4>How to Exploit:</h4>
+    <p>
+        Try adding this to the end of the URL:
+        <code>?name=&lt;script&gt;alert('This is an XSS Attack!')&lt;/script&gt;</code>
+    </p>
+    <p>
+        Or try this:
+        <code>?name=&lt;h1 style="color:red;"&gt;I can change the HTML!&lt;/h1&gt;</code>
+    </p>
+</body>
+</html>
