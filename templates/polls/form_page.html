@@ -1,1 +1,28 @@
-hello
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Secure Form</title>
+    <style>
+        form { margin-top: 20px; }
+        .success { color: green; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Secure Input Form</h1>
+    <p>This form is secured against CSRF and validates/sanitizes input.</p>
+    <p><a href="/">Back to Home</a></p>
+
+    {% if submitted_name %}
+        <p class="success">Thanks, {{ submitted_name }}! Your form was submitted securely.</p>
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+        
+        {{ form.as_p }}
+        
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
