@@ -1,0 +1,4 @@
+Django>=4.2
+pefile      # Library to analyze Windows EXE files (checks for DEP/ASLR)
+bandit      # Security linter to scan your own code
+requests    # Standard library for making requests (useful for dynamic analysis)
