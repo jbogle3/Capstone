@@ -1,6 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .forms import ContactForm  # <--- ADD THIS IMPORT
+from .forms import ContactForm, UploadedFileForm
+from .models import UploadedFile
 
 # New Home Page View (for '/')
 def home(request):
@@ -10,6 +11,22 @@ def home(request):
     # This view uses a template from the root 'templates' folder
     return render(request, "home.html")
 
+def upload_file(request):
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.file_name = request.FILES['file'].name
+            
+            # --- CAPSTONE COMPONENT 4: ANALYSIS LOGIC HERE ---
+            # run_security_scan(instance.file) 
+            # instance.has_aslr = check_aslr(instance.file)
+            
+            instance.save()
+            return redirect('index')
+    else:
+        form = UploadFileForm()
+    return render(request, 'polls/upload.html', {'form': form})
 
 def index(request):
     """
