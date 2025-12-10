@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Secure File Analysis</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        .form-container { border: 1px solid #ccc; padding: 20px; border-radius: 5px; max-width: 500px; }
+        button { background-color: #007bff; color: white; padding: 10px 20px; border: none; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+    <h1>Upload Binary for Security Analysis</h1>
+    <p>Upload a Windows Executable (.exe) or DLL to check for <strong>ASLR</strong> and <strong>DEP</strong> protections.</p>
+    
+    <div class="form-container">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Upload & Analyze</button>
+        </form>
+    </div>
+
+    <p><a href="/">Back to Home</a></p>
+</body>
+</html>
