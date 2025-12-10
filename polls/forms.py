@@ -1,6 +1,11 @@
-# Create this new file: polls/forms.py
-
 from django import forms
+from .models import UploadedFile
+
+class UploadFileForm(forms.ModelForm):
+    class Meta:
+        model = UploadedFile
+        fields = ['file']
+        # We limit the fields so users can't manipulate the security flags (is_safe, etc.)
 
 class ContactForm(forms.Form):
     """
