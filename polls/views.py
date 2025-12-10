@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .forms import ContactForm, UploadedFileForm
+from .forms import ContactForm, UploadFileForm
 from .models import UploadedFile
+import pefile
+import os
 
 # New Home Page View (for '/')
 def home(request):
@@ -36,6 +38,51 @@ def index(request):
     # We are changing this from HttpResponse to render()
     return render(request, "polls/index.html")
 
+def upload_analysis(request):
+    """
+    Capstone Option 1: Secure File Upload & Analysis
+    1. Accepts a file upload.
+    2. Performs static analysis using 'pefile'.
+    3. Checks for memory protections (DEP and ASLR).
+    4. Saves results to the database.
+    """
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            # 1. Save the file instance but don't commit to DB yet
+            instance = form.save(commit=False)
+            instance.file_name = request.FILES['file'].name
+            
+            # Save strictly to disk so we can read it for analysis
+            instance.save() 
+            
+            # 2 & 3. Perform Analysis
+            # We wrap this in a try/except in case the file isn't a valid EXE
+            try:
+                file_path = instance.file.path
+                pe = pefile.PE(file_path)
+                
+                # Check for ASLR (DLL Characteristics flag 0x0040)
+                if pe.OPTIONAL_HEADER.DllCharacteristics & 0x0040:
+                    instance.has_aslr = True
+                
+                # Check for DEP (DLL Characteristics flag 0x0100)
+                if pe.OPTIONAL_HEADER.DllCharacteristics & 0x0100:
+                    instance.has_dep = True
+                    
+                pe.close()
+            except Exception as e:
+                # If it fails (e.g., user uploaded a text file), assume no protections
+                print(f"Analysis failed: {e}")
+            
+            # 4. Save the analysis results
+            instance.save()
+            
+            return redirect('index') # Redirect to home or a results page
+    else:
+        form = UploadFileForm()
+    
+    return render(request, 'polls/upload_page.html', {'form': form})
 
 # New Form Page View (for '/polls/form/')
 def form_page(request):
