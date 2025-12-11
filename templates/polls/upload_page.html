@@ -1,27 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Secure File Analysis</title>
-    <style>
-        body { font-family: sans-serif; padding: 20px; }
-        .form-container { border: 1px solid #ccc; padding: 20px; border-radius: 5px; max-width: 500px; }
-        button { background-color: #007bff; color: white; padding: 10px 20px; border: none; cursor: pointer; }
-        button:hover { background-color: #0056b3; }
-    </style>
-</head>
-<body>
-    <h1>Upload Binary for Security Analysis</h1>
-    <p>Upload a Windows Executable (.exe) or DLL to check for <strong>ASLR</strong> and <strong>DEP</strong> protections.</p>
-    
-    <div class="form-container">
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit">Upload & Analyze</button>
-        </form>
-    </div>
+{% extends 'base.html' %}
 
-    <p><a href="/">Back to Home</a></p>
-</body>
-</html>
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h2 class="h4 mb-0">Upload Binary for Analysis</h2>
+            </div>
+            <div class="card-body">
+                <p class="card-text text-muted">Upload a Windows Executable (.exe) to automatically check for <strong>ASLR</strong> and <strong>DEP</strong> memory protections.</p>
+                
+                <form method="post" enctype="multipart/form-data" class="mt-4">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="id_file" class="form-label">Select File</label>
+                        <input type="file" name="file" class="form-control" id="id_file" required>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">Upload & Analyze</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="text-center mt-3">
+            <a href="/polls/dashboard/" class="text-decoration-none">View Recent Results &rarr;</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

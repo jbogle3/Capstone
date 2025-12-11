@@ -1,0 +1,40 @@
+import pefile
+import os
+import shutil
+import sys
+
+def get_template():
+    # Try to find a system binary to copy
+    paths = [
+        r"C:\Windows\System32\notepad.exe",       # Windows
+        "/mnt/c/Windows/System32/notepad.exe",     # WSL
+    ]
+    for p in paths:
+        if os.path.exists(p):
+            return p
+    return None
+
+def make_unsafe():
+    template = get_template()
+    if not template:
+        print("Error: Could not find notepad.exe to use as a template.")
+        return
+
+    output_file = "unsafe_threat.exe"
+    
+    # Load the PE file
+    pe = pefile.PE(template)
+    
+    # Remove ASLR (0x0040) and DEP (0x0100) flags
+    pe.OPTIONAL_HEADER.DllCharacteristics &= ~0x0040
+    pe.OPTIONAL_HEADER.DllCharacteristics &= ~0x0100
+    
+    # Write the modified file
+    pe.write(output_file)
+    pe.close()
+    
+    print(f"Successfully created: {output_file}")
+    print("Upload this file. It has NO ASLR and NO DEP.")
+
+if __name__ == "__main__":
+    make_unsafe()

@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Application Security Audit Logs</h1>
+    <p class="text-muted">These reports display the results of static and dynamic analysis performed on the <strong>SecurePortal application itself</strong>.</p>
+    
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card">
+                <div class="card-header bg-warning text-dark fw-bold">
+                    🕵️ Bandit Static Analysis Report (Source Code)
+                </div>
+                <div class="card-body bg-light">
+                    <pre style="max-height: 400px; overflow-y: scroll;">{{ reports.bandit }}</pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-danger text-white fw-bold">
+                    💣 Fuzzer Dynamic Analysis Report (Upload Endpoint)
+                </div>
+                <div class="card-body bg-light">
+                    <pre style="max-height: 400px; overflow-y: scroll;">{{ reports.fuzzer }}</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="mt-4 text-center">
+        <a href="/polls/dashboard/" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}

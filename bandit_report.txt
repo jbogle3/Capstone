@@ -1,0 +1,81 @@
+Run started:2025-12-11 12:24:35.906658
+
+Test results:
+>> Issue: [B311:blacklist] Standard pseudo-random generators are not suitable for security/cryptographic purposes.
+   Severity: Low   Confidence: High
+   CWE: CWE-330 (https://cwe.mitre.org/data/definitions/330.html)
+   More Info: https://bandit.readthedocs.io/en/1.7.10/blacklists/blacklist_calls.html#b311-random
+   Location: ./fuzzer.py:12:19
+11	def generate_random_string(length):
+12	    return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
+13	
+
+--------------------------------------------------
+>> Issue: [B113:request_without_timeout] Call to requests without timeout
+   Severity: Medium   Confidence: Low
+   CWE: CWE-400 (https://cwe.mitre.org/data/definitions/400.html)
+   More Info: https://bandit.readthedocs.io/en/1.7.10/plugins/b113_request_without_timeout.html
+   Location: ./fuzzer.py:28:19
+27	        # For this test, we will see if we get a 403 (CSRF Error) which IS a pass (security working!)
+28	        response = requests.post(TARGET_URL, files=files)
+29	        print(f"Status Code: {response.status_code}")
+
+--------------------------------------------------
+>> Issue: [B113:request_without_timeout] Call to requests without timeout
+   Severity: Medium   Confidence: Low
+   CWE: CWE-400 (https://cwe.mitre.org/data/definitions/400.html)
+   More Info: https://bandit.readthedocs.io/en/1.7.10/plugins/b113_request_without_timeout.html
+   Location: ./fuzzer.py:44:19
+43	    try:
+44	        response = requests.post(TARGET_URL, files=files)
+45	        print(f"Status Code: {response.status_code}")
+
+--------------------------------------------------
+>> Issue: [B113:request_without_timeout] Call to requests without timeout
+   Severity: Medium   Confidence: Low
+   CWE: CWE-400 (https://cwe.mitre.org/data/definitions/400.html)
+   More Info: https://bandit.readthedocs.io/en/1.7.10/plugins/b113_request_without_timeout.html
+   Location: ./fuzzer.py:58:19
+57	    try:
+58	        response = requests.post(TARGET_URL, files=files)
+59	        print(f"Status Code: {response.status_code}")
+
+--------------------------------------------------
+>> Issue: [B113:request_without_timeout] Call to requests without timeout
+   Severity: Medium   Confidence: Low
+   CWE: CWE-400 (https://cwe.mitre.org/data/definitions/400.html)
+   More Info: https://bandit.readthedocs.io/en/1.7.10/plugins/b113_request_without_timeout.html
+   Location: ./fuzzer.py:68:19
+67	    try:
+68	        response = requests.post(TARGET_URL, data={})
+69	        print(f"Status Code: {response.status_code}")
+
+--------------------------------------------------
+>> Issue: [B105:hardcoded_password_string] Possible hardcoded password: 'django-insecure-&$*)_e277jw(#$^p&^9y-zbp22a5ld#r!4q$&*5mo^2-dkjfjo'
+   Severity: Low   Confidence: Medium
+   CWE: CWE-259 (https://cwe.mitre.org/data/definitions/259.html)
+   More Info: https://bandit.readthedocs.io/en/1.7.10/plugins/b105_hardcoded_password_string.html
+   Location: ./mysite/settings.py:14:13
+13	# Quick-start development settings - unsuitable for production
+14	SECRET_KEY = 'django-insecure-&$*)_e277jw(#$^p&^9y-zbp22a5ld#r!4q$&*5mo^2-dkjfjo'
+15	DEBUG = True
+
+--------------------------------------------------
+
+Code scanned:
+	Total lines of code: 357
+	Total lines skipped (#nosec): 0
+	Total potential issues skipped due to specifically being disabled (e.g., #nosec BXXX): 0
+
+Run metrics:
+	Total issues (by severity):
+		Undefined: 0
+		Low: 2
+		Medium: 4
+		High: 0
+	Total issues (by confidence):
+		Undefined: 0
+		Low: 4
+		Medium: 1
+		High: 1
+Files skipped (0):

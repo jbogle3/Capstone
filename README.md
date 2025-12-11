@@ -1,78 +1,81 @@
-# Django Security Demo App
+# Secure File Analysis & Web Security Portal (Capstone Project)
 
-This is a simple Django web application built to demonstrate basic routing, template usage, and web security principles.
+## Project Overview
+This project is a secure web application built with **Django** and **Docker**. It demonstrates advanced software security principles including **Static & Dynamic Analysis**, **Memory Protection (ASLR/DEP) detection**, and secure coding practices.
 
-## App Structure
+The application serves as a "Security Sandbox" where users can upload binary files to check for security mitigations, while also providing educational demonstrations of secure vs. vulnerable web forms.
 
-- `mysite/`: The main Django project folder.
-  - `settings.py`: Project settings. Edited to add the `polls` app and the root `templates` directory.
-  - `urls.py`: Main URL router. Routes `/` to the home page, `/admin` to the admin site, and `/polls/` to the `polls` app.
-- `polls/`: A Django app that contains the site's main logic.
-  - `urls.py`: App-level URL router. Routes `/polls/`, `/polls/form/`, and `/polls/vulnerable/`.
-  - `views.py`: Contains the view functions (logic) for each page.
-  - `forms.py`: (New file) Contains the `ContactForm` class for secure form handling.
-  - `models.py`: (Unused in this demo) For database models.
-- `templates/`: Contains all HTML templates for the project.
-  - `home.html`: The main site home page (`/`).
-  - `polls/`: Templates specific to the `polls` app.
-    - `index.html`: The app's index page (`/polls/`).
-    - `form_page.html`: The secure user input form page (`/polls/form/`).
-    - `vulnerable_page.html`: The page with the intentional vulnerability (`/polls/vulnerable/`).
-- `manage.py`: Django's command-line utility.
+## 🚀 Quick Start (Docker)
+The entire application is containerized for secure isolation.
 
-## Functionality
-
-This application has 4 distinct routes:
-
-1.  **Home Page (`/`)**
-    -   Handled by `polls.views.home`.
-    -   Renders `templates/home.html`.
-    -   Provides simple navigation to the other pages.
-
-2.  **Polls Index Page (`/polls/`)**
-    -   Handled by `polls.views.index`.
-    -   Renders `templates/polls/index.html`.
-    -   The original page from the Django tutorial.
-
-3.  **Secure Form Page (`/polls/form/`)**
-    -   Handled by `polls.views.form_page`.
-    -   Renders `templates/polls/form_page.html`.
-    -   **Functionality:**
-        -   Displays a form defined in `polls/forms.py`.
-        -   **Good Security (CSRF):** The form uses the `{% csrf_token %}` tag to protect against Cross-Site Request Forgery.
-        -   **Good Security (Input Validation):** On submit, the view uses `form.is_valid()` to validate and sanitize the input (e.g., checking `max_length`, `required`, and stripping whitespace).
-        -   **Good Security (Output Escaping):** When the submitted name is shown, Django's template engine auto-escapes it (`{{ submitted_name }}`), preventing XSS attacks from the form input.
-
-4.  **Vulnerable Page (`/polls/vulnerable/`)**
-    -   Handled by `polls.views.vulnerable_page`.
-    -   Renders `templates/polls/vulnerable_page.html`.
-    -   **Functionality:** Takes a URL query parameter `name` and displays it on the page.
-
----
-
-## 🚨 Intentional Vulnerability
-
-This project contains one intentional, subtle security vulnerability.
-
-* **File:** `templates/polls/vulnerable_page.html`
-* **Line:** `Welcome, {{ name|safe }}!`
-* **Vulnerability:** **Reflected Cross-Site Scripting (XSS)**
-
-### Explanation
-
-By default, Django's template engine **auto-escapes** all variables. This means if a variable `name` contains `<script>`, Django will render it as the literal text `&lt;script&gt;`, which the browser will not execute. This is a critical security feature that prevents XSS.
-
-The vulnerability is introduced by using the `|safe` filter. This filter explicitly tells Django, "Do not auto-escape this variable. Trust it and render it as raw HTML."
-
-This allows any HTML or JavaScript passed in the URL to be rendered and executed by the browser.
-
-### How to Exploit
-
-1.  Navigate to the vulnerable page: `/polls/vulnerable/`
-2.  Append a query parameter to the URL containing a JavaScript payload, like this:
-
-    ```
-    /polls/vulnerable/?name=<script>alert('You have been hacked!')</script>
+1.  **Build the Container:**
+    ```bash
+    docker build -t capstone-security-app .
     ```
 
-3.  When the page loads, the browser will execute the script, and an alert box will pop up. This demonstrates that an attacker could run any arbitrary JavaScript on this page.
+2.  **Run the Application:**
+    ```bash
+    docker run -p 8000:8000 capstone-security-app
+    ```
+
+3.  **Access the Dashboard:**
+    Open your browser to [http://127.0.0.1:8000](http://127.0.0.1:8000).
+
+## 🛠️ Components & Functionality
+
+### 1. Secure File Analysis Engine (Option 1)
+* **Location:** `/polls/upload/`
+* **Function:** Users can upload Windows Executable (`.exe`) files.
+* **Security Logic:** The backend uses `pefile` to parse the binary header and inspect `DllCharacteristics`.
+    * **ASLR Detection:** Checks for the `IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE` flag.
+    * **DEP Detection:** Checks for the `IMAGE_DLLCHARACTERISTICS_NX_COMPAT` flag.
+* **Storage:** Results are logged to a SQLite database and displayed on the Dashboard.
+
+### 2. Live Security Dashboard
+* **Location:** `/polls/dashboard/`
+* **Function:** Displays a real-time table of all analyzed files.
+* **Features:**
+    * Visual badges (Green/Red) indicating if ASLR/DEP are enabled.
+    * Overall "SAFE" or "THREAT" status based on analysis.
+
+### 3. Secure Input Form
+* **Location:** `/polls/form/`
+* **Function:** Demonstrates secure handling of user input.
+* **Defenses Implemented:**
+    * **CSRF Protection:** Uses Django's `{% csrf_token %}` to prevent Cross-Site Request Forgery.
+    * **Input Sanitization:** Validates `max_length` and strips malicious characters via Django Forms.
+    * **Output Encoding:** Auto-escapes special characters to prevent XSS.
+
+### 4. Intentional Vulnerability (Educational)
+* **Location:** `/polls/vulnerable/`
+* **Vulnerability:** **Reflected Cross-Site Scripting (XSS)**.
+* **Mechanism:** The view accepts a raw `name` parameter from the URL and renders it using the `|safe` filter, bypassing Django's auto-escaping.
+* **Proof of Concept:** Appending `<script>alert(1)</script>` to the URL executes JavaScript.
+
+## 🔍 Security Analysis Reports
+
+### Static Analysis (Bandit)
+We ran `bandit -r .` against the codebase.
+* **Finding:** `settings.py` had `DEBUG = True`.
+* **Mitigation:** In a real production deployment, this would be set to `False` to prevent stack trace leakage.
+* **Finding:** Hardcoded `SECRET_KEY`.
+* **Mitigation:** Used environment variables in the Docker container for the final build.
+
+### Dynamic Analysis (Fuzzing)
+We tested the upload endpoint (`/polls/upload/`) using a custom Python fuzzer (`fuzzer.py`).
+* **Test:** Attempted upload without CSRF token.
+    * **Result:** `403 Forbidden` (PASSED - Protection Active).
+* **Test:** Buffer Overflow (Massive filename).
+    * **Result:** Handled gracefully by Django (No 500 Crash).
+* **Test:** SQL Injection in filename.
+    * **Result:** Sanitized by Django ORM (No DB injection possible).
+
+## 📂 Project Structure
+* **`mysite/`**: Core Django settings and configuration.
+* **`polls/`**: Main application logic.
+    * `models.py`: Database schema for `UploadedFile`.
+    * `views.py`: Logic for Analysis Engine and Dashboard.
+    * `forms.py`: Secure form definitions.
+* **`templates/`**: Bootstrap 5 HTML templates (Dark Mode enabled).
+* **`Dockerfile`**: Configuration for the secure, isolated environment.
+* **`fuzzer.py`**: Script used for dynamic security testing.

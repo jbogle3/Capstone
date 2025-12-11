@@ -1,28 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Secure Form</title>
-    <style>
-        form { margin-top: 20px; }
-        .success { color: green; font-weight: bold; }
-    </style>
-</head>
-<body>
-    <h1>Secure Input Form</h1>
-    <p>This form is secured against CSRF and validates/sanitizes input.</p>
-    <p><a href="/">Back to Home</a></p>
+{% extends 'base.html' %}
 
-    {% if submitted_name %}
-        <p class="success">Thanks, {{ submitted_name }}! Your form was submitted securely.</p>
-    {% endif %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h2 class="h4 mb-0">Secure Input Form</h2>
+            </div>
+            <div class="card-body">
+                <p class="mb-4">This form demonstrates secure coding practices, including <strong>CSRF protection</strong> and <strong>Input Sanitization</strong>.</p>
 
-    <form method="POST">
-        {% csrf_token %}
-        
-        {{ form.as_p }}
-        
-        <button type="submit">Submit</button>
-    </form>
-</body>
-</html>
+                {% if submitted_name %}
+                    <div class="alert alert-success" role="alert">
+                        <h4 class="alert-heading">Success!</h4>
+                        <p>Input securely processed. Welcome, <strong>{{ submitted_name }}</strong>.</p>
+                    </div>
+                {% endif %}
+
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        {{ form.as_p }}
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success">Submit Securely</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

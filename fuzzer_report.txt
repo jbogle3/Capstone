@@ -1,0 +1,18 @@
+--- Starting Fuzzing Attack on http://127.0.0.1:8000/polls/upload/ ---
+
+[1] Testing Valid File Upload...
+Status Code: 403
+Result: PASSED (CSRF Protection is active).
+
+[2] Testing Massive File Name...
+Status Code: 403
+Result: PASSED (Server rejected or handled it).
+
+[3] Testing SQL Injection in Filename...
+Status Code: 403
+Result: Check your server logs. If no crash, Django protected the DB.
+
+[4] Testing Empty Upload...
+Status Code: 403
+
+--- Fuzzing Complete ---

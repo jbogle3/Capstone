@@ -1,16 +1,50 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Home</title>
-</head>
-<body>
-    <h1>Welcome to the Main Home Page</h1>
-    <p>This is the <code>/</code> route for the project.</p>
-    <ul>
-        <li><a href="/polls/">Go to the Polls Index</a></li>
-        <li><a href="/polls/form/">Go to the Secure Form</a></li>
-        <li><a href="/polls/vulnerable/">Go to the Vulnerable Page</a></li>
-    </ul>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="text-center mb-5">
+    <h1 class="display-4 fw-bold">Security Analysis Capstone</h1>
+    <p class="lead text-muted">A comprehensive platform for secure file analysis, vulnerability testing, and secure coding demonstration.</p>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <h3 class="card-title">📊 Dashboard</h3>
+                <p class="card-text">View real-time results of analyzed files, checking for ASLR and DEP protections.</p>
+                <a href="/polls/dashboard/" class="btn btn-primary mt-2">Open Dashboard</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <h3 class="card-title">📁 File Analysis</h3>
+                <p class="card-text">Upload binaries (.exe) to perform static analysis and check security flags.</p>
+                <a href="/polls/upload/" class="btn btn-success mt-2">Analyze File</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <h3 class="card-title">🔒 Secure Input</h3>
+                <p class="card-text">Test a form protected against CSRF and XSS with proper input validation.</p>
+                <a href="/polls/form/" class="btn btn-info text-white mt-2">Test Secure Form</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4 mx-auto">
+        <div class="card h-100 border-warning">
+            <div class="card-body text-center">
+                <h3 class="card-title text-danger">⚠️ Vulnerable Area</h3>
+                <p class="card-text">Demonstration of Reflected XSS. <strong>For educational purposes only.</strong></p>
+                <a href="/polls/vulnerable/" class="btn btn-outline-danger mt-2">Enter Danger Zone</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
